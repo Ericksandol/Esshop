@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 import { useEffect, useState, useContext } from "react";
+=======
+import { useEffect, useState, useContext } from "react"; 
+>>>>>>> Stashed changes
 import { useNavigate } from "react-router-dom";
 import { CartContext } from '../context/CartContext';
 
@@ -68,7 +72,18 @@ const Productos = () => {
                 <a className="nav-link" href="/contacto">Contacto</a>
               </li>
             </ul>
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 align-items-center">
+              <button
+                onClick={() => setShowCart(true)}
+                className="btn btn-warning position-relative"
+              >
+                🛒 Carrito
+                {cartItemCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
               <button
                 onClick={() => setShowCart(!showCart)}
                 className="btn btn-outline-light position-relative"
@@ -154,6 +169,7 @@ const Productos = () => {
       </main>
 
       {/* Modal del Carrito */}
+<<<<<<< Updated upstream
       {showCart && (
         <div className="position-fixed end-0 top-0 mt-5 me-3 p-3 bg-white shadow rounded" 
              style={{ zIndex: 1000, width: '300px' }}>
@@ -183,6 +199,48 @@ const Productos = () => {
           </button>
         </div>
       )}
+=======
+{showCart && (
+  <div className="position-fixed end-0 top-0 mt-5 me-3 p-3 bg-white shadow rounded" 
+       style={{ zIndex: 1000, width: '300px' }}>
+    <h5 className="text-center mb-3" style={{ color: '#003087' }}>Tu Carrito</h5>
+    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+      {cart.length > 0 ? (
+        cart.map((item, index) => (
+          <div key={index} className="d-flex justify-content-between mb-2">
+            <span>{item.nombre}</span>
+            <span>${item.precio.toFixed(2)}</span>
+          </div>
+        ))
+      ) : (
+        <p className="text-muted text-center">El carrito está vacío</p>
+      )}
+    </div>
+    <hr />
+    <div className="d-flex justify-content-between fw-bold mb-3">
+      <span>Total:</span>
+      <span>${total.toFixed(2)}</span>
+    </div>
+    <button
+      onClick={() => {
+        setShowCart(false);
+        navigate('/pedidos');
+      }}
+      className="btn btn-primary w-100 mb-2"
+      disabled={cart.length === 0}
+    >
+      Ir a ver pedido
+    </button>
+    <button
+      onClick={() => setShowCart(false)}
+      className="btn btn-outline-secondary w-100"
+    >
+      Cerrar
+    </button>
+  </div>
+)}
+
+>>>>>>> Stashed changes
 
       {/* Footer */}
       <footer
