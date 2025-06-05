@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from '../context/CartContext';
 
 const Productos = () => {
   const [productos, setProductos] = useState([]);
   const navigate = useNavigate();
+  const { cart, total, addToCart, showCart, setShowCart, cartItemCount } = useContext(CartContext);
 
   useEffect(() => {
     fetch("http://localhost:5157/productos")
@@ -14,6 +16,16 @@ const Productos = () => {
 
   const handleProductClick = (id) => {
     navigate(`/producto/${id}`);
+  };
+
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation();
+    addToCart({
+      id: product.id_producto,
+      nombre: product.nombre,
+      precio: product.precio,
+      img: product.imgProducto
+    });
   };
 
   return (
@@ -57,6 +69,17 @@ const Productos = () => {
               </li>
             </ul>
             <div className="d-flex gap-2">
+              <button
+                onClick={() => setShowCart(!showCart)}
+                className="btn btn-outline-light position-relative"
+              >
+                🛒 Carrito
+                {cartItemCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
               <button
                 onClick={() => navigate("/login")}
                 className="btn btn-outline-light"
@@ -116,10 +139,7 @@ const Productos = () => {
                     <button
                       className="btn w-100"
                       style={{ backgroundColor: '#FFC107', color: '#003087', fontWeight: '500' }}
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent card click from triggering
-                        alert(`Añadir ${prod.nombre} al carrito (funcionalidad pendiente)`);
-                      }}
+                      onClick={(e) => handleAddToCart(e, prod)}
                     >
                       Añadir al Carrito
                     </button>
@@ -132,6 +152,37 @@ const Productos = () => {
           <p className="text-center text-muted">No hay productos disponibles.</p>
         )}
       </main>
+
+      {/* Modal del Carrito */}
+      {showCart && (
+        <div className="position-fixed end-0 top-0 mt-5 me-3 p-3 bg-white shadow rounded" 
+             style={{ zIndex: 1000, width: '300px' }}>
+          <h5 className="text-center mb-3" style={{ color: '#003087' }}>Tu Carrito</h5>
+          <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            {cart.length > 0 ? (
+              cart.map((item, index) => (
+                <div key={index} className="d-flex justify-content-between mb-2">
+                  <span>{item.nombre}</span>
+                  <span>${item.precio.toFixed(2)}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-muted text-center">El carrito está vacío</p>
+            )}
+          </div>
+          <hr />
+          <div className="d-flex justify-content-between fw-bold mb-3">
+            <span>Total:</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
+          <button
+            onClick={() => setShowCart(false)}
+            className="btn btn-outline-secondary w-100"
+          >
+            Cerrar
+          </button>
+        </div>
+      )}
 
       {/* Footer */}
       <footer
